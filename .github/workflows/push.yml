@@ -32,4 +32,4 @@ jobs:
 
     - name: Run Terraspace
       run: |
-        terraspace up demo -y
+        terraspace up eks -y

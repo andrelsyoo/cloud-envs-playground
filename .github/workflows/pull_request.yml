@@ -31,4 +31,4 @@ jobs:
 
     - name: Run Terraspace
       run: |
-        terraspace plan demo
+        terraspace plan eks
