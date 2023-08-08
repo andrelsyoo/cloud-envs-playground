@@ -5,13 +5,12 @@ on:
       env:
         description: "TS_ENV"
         type: choice
-        default: prod
+        default: dev
         options: # Add more environment if needed
           - dev
-          - prod
       command:
         description: "Terraspace command to run"
-        default: "plan demo"
+        default: "plan eks"
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -21,8 +20,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: us-east-1
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      #TS_ENV: ${{ github.event.inputs.env }}
-      #TS_TOKEN: ${{ secrets.TS_TOKEN }}
+      TS_TOKEN: ${{ secrets.TS_TOKEN }}
 
     steps:
     - name: Checkout
