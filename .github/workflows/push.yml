@@ -13,8 +13,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: us-east-1
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      #TS_ENV: dev
-      #TS_TOKEN: ${{ secrets.TS_TOKEN }}
+      TS_TOKEN: ${{ secrets.TS_TOKEN }}
 
     steps:
     - name: Checkout
