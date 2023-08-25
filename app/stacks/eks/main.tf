@@ -2,6 +2,10 @@
 # EKS Module
 ################################################################################
 
+locals {
+  cluster_name = "${local.environment}-${local.region}-${var.kubernetes_suffix}"
+}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.15"
@@ -20,9 +24,8 @@ module "eks" {
     }
   }
 
-  vpc_id                   = module.vpc.vpc_id
-  subnet_ids               = module.vpc.private_subnets
-  control_plane_subnet_ids = module.vpc.intra_subnets
+  vpc_id                   = data.aws_vpc.vpc.id
+  subnet_ids               = data.aws_subnets.private.ids
 
   # Fargate profiles use the cluster primary security group so these are not utilized
   create_cluster_security_group = false
@@ -83,32 +86,6 @@ module "eks" {
 ################################################################################
 # Supporting Resources
 ################################################################################
-
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 4.0"
-
-  name = local.name
-  cidr = local.vpc_cidr
-
-  azs             = local.azs
-  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
-  public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
-  intra_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 52)]
-
-  enable_nat_gateway = true
-  single_nat_gateway = true
-
-  public_subnet_tags = {
-    "kubernetes.io/role/elb" = 1
-  }
-
-  private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = 1
-  }
-
-  tags = local.tags
-}
 
 resource "aws_iam_policy" "additional" {
   name = "${local.name}-additional"
