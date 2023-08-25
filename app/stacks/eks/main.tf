@@ -57,7 +57,7 @@ module "eks" {
         ]
 
         # Using specific subnets instead of the subnets supplied for the cluster itself
-        subnet_ids = [module.vpc.private_subnets[1]]
+        #subnet_ids = data.aws_subnets.private.ids
 
         tags = {
           Owner = "secondary"
@@ -69,15 +69,15 @@ module "eks" {
         }
       }
     },
-    { for i in range(3) :
-    "kube-system-${element(split("-", local.azs[i]), 2)}" => {
-      selectors = [
-        { namespace = "kube-system" }
-      ]
-      # We want to create a profile per AZ for high availability
-      subnet_ids = [element(module.vpc.private_subnets, i)]
-    }
-    }
+    #{ for i in range(3) :
+    #"kube-system-${element(split("-", local.azs[i]), 2)}" => {
+    #  selectors = [
+    #    { namespace = "kube-system" }
+    #  ]
+    #  # We want to create a profile per AZ for high availability
+    #  subnet_ids = [element(module.vpc.private_subnets, i)]
+    #}
+    #}
   )
 
   tags = local.tags
