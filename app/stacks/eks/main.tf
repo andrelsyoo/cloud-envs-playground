@@ -88,7 +88,7 @@ module "eks" {
 ################################################################################
 
 resource "aws_iam_policy" "additional" {
-  name = "${local.name}-additional"
+  name = "${local.environment}-additional"
 
   policy = jsonencode({
     Version = "2012-10-17"
