@@ -18,7 +18,7 @@ locals {
     {
       name           = "dev"
       id             = "710886127438"
-      domain         = "devpinata.cloud"
+      domain         = ""
       admin_role_arn = "arn:aws:iam::710886127438:role/"
     }
   ]
