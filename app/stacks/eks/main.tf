@@ -17,11 +17,11 @@ module "eks" {
   cluster_addons = {
     vpc-cni = {
       most_recent = false
-      addon_version     = "v1.13.0-eksbuild.1"
+      addon_version     = "v1.13.4-eksbuild.1"
     }
     coredns = {
       most_recent = false
-      addon_version     = "v1.10.1-eksbuild.1"
+      addon_version     = "v1.10.1-eksbuild.3"
       configuration_values = jsonencode({
         computeType = "fargate"
         resources = {
