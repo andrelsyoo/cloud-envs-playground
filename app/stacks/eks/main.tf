@@ -15,11 +15,25 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   cluster_addons = {
-    kube-proxy = {}
-    vpc-cni    = {}
+    vpc-cni = {
+      most_recent = false
+      addon_version     = "v1.13.0-eksbuild.1"
+    }
     coredns = {
+      most_recent = false
+      addon_version     = "v1.10.1-eksbuild.1"
       configuration_values = jsonencode({
-        computeType = "Fargate"
+        computeType = "fargate"
+        resources = {
+          limits = {
+            cpu    = "0.25"
+            memory = "256M"
+          }
+          requests = {
+            cpu    = "0.25"
+            memory = "256M"
+          }
+        }
       })
     }
   }
@@ -28,57 +42,56 @@ module "eks" {
   subnet_ids               = data.aws_subnets.private.ids
 
   # Fargate profiles use the cluster primary security group so these are not utilized
-  create_cluster_security_group = false
+  create_cluster_security_group = true
   create_node_security_group    = false
-
-  fargate_profile_defaults = {
-    iam_role_additional_policies = {
-      additional = aws_iam_policy.additional.arn
+  cluster_security_group_additional_rules = {
+    allow_vpc_cluster = {
+      description = "All VPC to cluster endpoint"
+      protocol    = "-1"
+      from_port   = 443
+      to_port     = 443
+      type        = "ingress"
+      cidr_blocks = ["10.0.0.0/8"]
     }
   }
 
-  fargate_profiles = merge(
-    {
-      example = {
-        name = "example"
-        selectors = [
-          {
-            namespace = "backend"
-            labels = {
-              Application = "backend"
-            }
-          },
-          {
-            namespace = "app-*"
-            labels = {
-              Application = "app-wildcard"
-            }
+  cluster_security_group_tags = {
+    "karpenter.sh/discovery" = local.cluster_name
+  }
+
+  cluster_enabled_log_types = [
+    "audit",
+    "api",
+    "authenticator",
+    "controllerManager",
+    "scheduler"
+  ]
+
+  # We'll not be deploying node groups as we'll be using Karpenter for this
+  # The fargate profiles are only for hosting the karpenter and core-dns pods
+  # Reducing the need for a static node group, hence reducing our costs
+  fargate_profiles = {
+    karpenter = {
+      selectors = [
+        {
+          namespace = "kube-system"
+          labels = {
+            "app.kubernetes.io/name" = "karpenter"
           }
-        ]
-
-        # Using specific subnets instead of the subnets supplied for the cluster itself
-        #subnet_ids = data.aws_subnets.private.ids
-
-        tags = {
-          Owner = "secondary"
         }
-
-        timeouts = {
-          create = "20m"
-          delete = "20m"
+      ]
+    }
+    coredns = {
+      selectors = [
+        {
+          namespace = "kube-system"
+          labels = {
+            "eks.amazonaws.com/component" = "coredns"
+          }
         }
-      }
-    },
-    #{ for i in range(3) :
-    #"kube-system-${element(split("-", local.azs[i]), 2)}" => {
-    #  selectors = [
-    #    { namespace = "kube-system" }
-    #  ]
-    #  # We want to create a profile per AZ for high availability
-    #  subnet_ids = [element(module.vpc.private_subnets, i)]
-    #}
-    #}
-  )
+      ]
+    }
+  }
 
   tags = local.tags
 }
