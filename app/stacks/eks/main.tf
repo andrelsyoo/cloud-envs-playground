@@ -19,23 +19,23 @@ module "eks" {
       most_recent = false
       addon_version     = "v1.13.4-eksbuild.1"
     }
-    #coredns = {
-    #  most_recent = false
-    #  addon_version     = "v1.10.1-eksbuild.3"
-    #  configuration_values = jsonencode({
-    #    computeType = "fargate"
-    #    resources = {
-    #      limits = {
-    #        cpu    = "0.25"
-    #        memory = "256M"
-    #      }
-    #      requests = {
-    #        cpu    = "0.25"
-    #        memory = "256M"
-    #      }
-    #    }
-    #  })
-    #}
+    coredns = {
+      most_recent = false
+      addon_version     = "v1.10.1-eksbuild.3"
+      configuration_values = jsonencode({
+        computeType = "fargate"
+        resources = {
+          limits = {
+            cpu    = "0.25"
+            memory = "256M"
+          }
+          requests = {
+            cpu    = "0.25"
+            memory = "256M"
+          }
+        }
+      })
+    }
   }
 
   vpc_id                   = data.aws_vpc.vpc.id
@@ -51,7 +51,7 @@ module "eks" {
       from_port   = 443
       to_port     = 443
       type        = "ingress"
-      cidr_blocks = ["10.0.0.0/8"]
+      cidr_blocks = ["172.31.0.0/16"]
     }
   }
 
