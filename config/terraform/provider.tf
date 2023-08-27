@@ -5,3 +5,16 @@
  provider "aws" {
    region = "us-east-1"
  }
+
+terraform {
+  required_providers {
+    bcrypt = {
+      source  = "viktorradnai/bcrypt"
+      version = ">= 0.1.2"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.14.0"
+    }
+  }
+}
