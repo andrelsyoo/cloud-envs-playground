@@ -68,15 +68,6 @@ module "eks" {
           delete = "20m"
         }
       }
-    },
-    { for i in range(3) :
-    "kube-system-${element(split("-", local.azs[i]), 2)}" => {
-      selectors = [
-        { namespace = "kube-system" }
-      ]
-      # We want to create a profile per AZ for high availability
-      subnet_ids = [element(data.aws_subnets.private.ids, i)]
-    }
     }
   )
 
