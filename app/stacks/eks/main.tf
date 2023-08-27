@@ -53,7 +53,7 @@ module "eks" {
   #    type        = "ingress"
   #    cidr_blocks = ["172.31.0.0/16"]
   #  }
-  }
+  #}
 
   cluster_security_group_tags = {
     "karpenter.sh/discovery" = local.cluster_name
