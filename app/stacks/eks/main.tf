@@ -93,26 +93,20 @@ module "eks" {
     }
   }
 
+  kms_key_aliases = ["alias/${local.cluster_name}"]
+
+  manage_aws_auth_configmap = true
+  aws_auth_roles = [
+    # We need to add in the Karpenter node IAM role for nodes launched by Karpenter
+    {
+      rolearn  = module.karpenter.karpenter.node_iam_role_arn
+      username = "system:node:{{EC2PrivateDNSName}}"
+      groups = [
+        "system:bootstrappers",
+        "system:nodes",
+      ]
+    }
+  ]
+
   tags = local.tags
-}
-
-################################################################################
-# Supporting Resources
-################################################################################
-
-resource "aws_iam_policy" "additional" {
-  name = "${local.environment}-additional"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "ec2:Describe*",
-        ]
-        Effect   = "Allow"
-        Resource = "*"
-      },
-    ]
-  })
 }
