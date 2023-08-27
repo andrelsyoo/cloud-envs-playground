@@ -44,15 +44,15 @@ module "eks" {
   # Fargate profiles use the cluster primary security group so these are not utilized
   create_cluster_security_group = true
   create_node_security_group    = false
-  cluster_security_group_additional_rules = {
-    allow_vpc_cluster = {
-      description = "All VPC to cluster endpoint"
-      protocol    = "-1"
-      from_port   = 443
-      to_port     = 443
-      type        = "ingress"
-      cidr_blocks = ["172.31.0.0/16"]
-    }
+  #cluster_security_group_additional_rules = {
+  #  allow_vpc_cluster = {
+  #    description = "All VPC to cluster endpoint"
+  #    protocol    = "-1"
+  #    from_port   = 443
+  #    to_port     = 443
+  #    type        = "ingress"
+  #    cidr_blocks = ["172.31.0.0/16"]
+  #  }
   }
 
   cluster_security_group_tags = {
