@@ -7,7 +7,7 @@ locals {
 
   tags = {
     Organization = local.organization
-    Repository   = "https://github.com/andrelsyoo/infra/"
+    Repository   = "https://github.com/andrelsyoo/cloud-envs-playground/"
     Region       = "<%= expansion(':REGION') %>"
     Environment  = "<%= expansion(':ENV') %>"
     Stack        = "<%= expansion(':MOD_NAME') %>"

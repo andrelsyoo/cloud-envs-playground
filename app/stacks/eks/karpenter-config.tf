@@ -32,51 +32,51 @@ resource "kubectl_manifest" "karpenter_node_template" {
   YAML
 }
 
-resource "kubectl_manifest" "karpenter_provisioner" {
-  depends_on = [kubectl_manifest.karpenter_node_template]
-  lifecycle {
-    ignore_changes = [
-      yaml_body,
-    ]
-  }
-
-  yaml_body = <<-YAML
-    apiVersion: karpenter.sh/v1alpha5
-    kind: Provisioner
-    metadata:
-      name: "${module.eks.cluster_name}-default"
-    spec:
-      consolidation:
-        enabled: true
-      ttlSecondsUntilExpired: 604800
-      requirements:
-        - key: "instance-encryption-in-transit-supported"
-          operator: In
-          values: ["true"]
-        - key: "karpenter.k8s.aws/instance-category"
-          operator: In
-          values: ["m"]
-        - key: "karpenter.k8s.aws/instance-cpu"
-          operator: In
-          values: ["2", "4", "8"]
-        - key: "karpenter.k8s.aws/instance-hypervisor"
-          operator: In
-          values: ["nitro"]
-        - key: karpenter.sh/capacity-type
-          operator: In
-          values: ["spot", "on-demand"]
-        - key: kubernetes.io/os
-          operator: In
-          values: ["linux"]
-        - key: kubernetes.io/arch
-          operator: In
-          values:
-            - amd64
-      limits:
-        resources:
-          cpu: '100'
-          memory: 200Gi
-      providerRef:
-        name: "${module.eks.cluster_name}-default"
-  YAML
-}
+#resource "kubectl_manifest" "karpenter_provisioner" {
+#  depends_on = [kubectl_manifest.karpenter_node_template]
+#  lifecycle {
+#    ignore_changes = [
+#      yaml_body,
+#    ]
+#  }
+#
+#  yaml_body = <<-YAML
+#    apiVersion: karpenter.sh/v1alpha5
+#    kind: Provisioner
+#    metadata:
+#      name: "${module.eks.cluster_name}-default"
+#    spec:
+#      consolidation:
+#        enabled: true
+#      ttlSecondsUntilExpired: 604800
+#      requirements:
+#        - key: "instance-encryption-in-transit-supported"
+#          operator: In
+#          values: ["true"]
+#        - key: "karpenter.k8s.aws/instance-category"
+#          operator: In
+#          values: ["m"]
+#        - key: "karpenter.k8s.aws/instance-cpu"
+#          operator: In
+#          values: ["2", "4", "8"]
+#        - key: "karpenter.k8s.aws/instance-hypervisor"
+#          operator: In
+#          values: ["nitro"]
+#        - key: karpenter.sh/capacity-type
+#          operator: In
+#          values: ["spot", "on-demand"]
+#        - key: kubernetes.io/os
+#          operator: In
+#          values: ["linux"]
+#        - key: kubernetes.io/arch
+#          operator: In
+#          values:
+#            - amd64
+#      limits:
+#        resources:
+#          cpu: '100'
+#          memory: 200Gi
+#      providerRef:
+#        name: "${module.eks.cluster_name}-default"
+#  YAML
+#}
