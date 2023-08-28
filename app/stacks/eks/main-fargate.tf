@@ -63,7 +63,7 @@ module "eks" {
         ]
 
         # Using specific subnets instead of the subnets supplied for the cluster itself
-        subnet_ids = [data.aws_subnets.private.ids[1]]
+        subnet_ids = [module.vpc.private_subnets[1]]
 
         tags = {
           Owner = "secondary"
