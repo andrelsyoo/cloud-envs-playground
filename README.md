@@ -1,1 +1,1 @@
-# infra
+# Playground environments to play
