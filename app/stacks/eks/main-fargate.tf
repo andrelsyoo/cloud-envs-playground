@@ -6,7 +6,6 @@ data "aws_availability_zones" "available" {}
 locals {
   cluster_name = "${local.environment}-${local.region}-${var.kubernetes_suffix}"
   cluster_version = "1.27"
-  region          = "eu-west-1"
 
   vpc_cidr = "10.0.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
